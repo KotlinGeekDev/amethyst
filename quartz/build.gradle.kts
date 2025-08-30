@@ -112,6 +112,13 @@ kotlin {
             }
         }
 
+        jvmTest {
+            dependencies {
+                // Bitcoin secp256k1 bindings
+                api(libs.secp256k1.kmp.jni.jvm)
+            }
+        }
+
         androidMain {
             dependencies {
                 implementation(libs.androidx.core.ktx)
