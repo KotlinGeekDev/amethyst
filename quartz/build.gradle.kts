@@ -84,6 +84,12 @@ kotlin {
             }
         }
 
+        commonTest {
+            dependencies {
+                implementation(libs.kotlin.test)
+            }
+        }
+
         jvmMain {
             dependencies {
                 // Bitcoin secp256k1 bindings
@@ -103,14 +109,6 @@ kotlin {
 
                 // Websockets API
                 implementation(libs.okhttp)
-            }
-        }
-
-        commonTest {
-            dependencies {
-                implementation(libs.kotlin.test)
-                // Bitcoin secp256k1 bindings
-                api(libs.secp256k1.kmp.jni.jvm)
             }
         }
 
