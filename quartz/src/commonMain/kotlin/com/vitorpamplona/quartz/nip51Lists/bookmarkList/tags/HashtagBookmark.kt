@@ -52,5 +52,7 @@ class HashtagBookmark(
         }
 
         fun assemble(hashtagString: String) = HashtagTag.assemble(hashtagString)
+
+        fun assemble(hashtagList: List<String>) = HashtagTag.assemble(tags = hashtagList)
     }
 }
