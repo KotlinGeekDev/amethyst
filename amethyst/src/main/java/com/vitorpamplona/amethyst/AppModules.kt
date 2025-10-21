@@ -133,16 +133,6 @@ class AppModules(
             scope = applicationIOScope,
         )
 
-    // manages all relay connections
-    val okHttpClientForRelaysForDms =
-        DualHttpClientManager(
-            userAgent = appAgent,
-            proxyPortProvider = torManager.activePortOrNull,
-            isMobileDataProvider = connManager.isMobileOrNull,
-            keyCache = keyCache,
-            scope = applicationIOScope,
-        )
-
     // Offers easy methods to know when connections are happening through Tor or not
     val roleBasedHttpClientBuilder = RoleBasedHttpClientBuilder(okHttpClients, torPrefs.value)
 
@@ -170,11 +160,7 @@ class AppModules(
     val websocketBuilder =
         OkHttpWebSocket.Builder { url ->
             val useTor = torEvaluatorFlow.flow.value.useTor(url)
-            if (url in torEvaluatorFlow.flow.value.dmRelayList) {
-                okHttpClientForRelaysForDms.getHttpClient(useTor)
-            } else {
-                okHttpClientForRelays.getHttpClient(useTor)
-            }
+            okHttpClientForRelays.getHttpClient(useTor)
         }
 
     // Caches all events in Memory
@@ -184,7 +170,15 @@ class AppModules(
     val client: INostrClient = NostrClient(websocketBuilder, applicationDefaultScope)
 
     // Watches for changes on Tor and Relay List Settings
-    val relayProxyClientConnector = RelayProxyClientConnector(torEvaluatorFlow.flow, okHttpClients, connManager, client, torManager, applicationDefaultScope)
+    val relayProxyClientConnector =
+        RelayProxyClientConnector(
+            torEvaluatorFlow.flow,
+            okHttpClientForRelays,
+            connManager,
+            torManager,
+            client,
+            applicationDefaultScope,
+        )
 
     // Verifies and inserts in the cache from all relays, all subscriptions
     val cacheClientConnector = CacheClientConnector(client, cache)
@@ -248,7 +242,7 @@ class AppModules(
     fun contentResolverFn(): ContentResolver = appContext.contentResolver
 
     fun setImageLoader() {
-        ImageLoaderSetup.setup(appContext, diskCache, memoryCache) { url ->
+        ImageLoaderSetup.setup(appContext, { diskCache }, { memoryCache }) { url ->
             okHttpClients.getHttpClient(roleBasedHttpClientBuilder.shouldUseTorForImageDownload(url))
         }
     }
@@ -270,15 +264,12 @@ class AppModules(
         applicationIOScope.launch {
             // preloads tor preferences
             torPrefs
+        }
 
+        // initializes diskcache on an IO thread.
+        applicationIOScope.launch {
             // Sets Coil - Tor - OkHttp link
             setImageLoader()
-
-            // prepares coil's disk cache
-            diskCache
-
-            // prepares exoplayer's disk cache
-            videoCache
         }
 
         // registers to receive events
