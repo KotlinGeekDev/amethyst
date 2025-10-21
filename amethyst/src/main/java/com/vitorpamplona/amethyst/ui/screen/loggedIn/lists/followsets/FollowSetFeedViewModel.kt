@@ -18,7 +18,7 @@
  * AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.vitorpamplona.amethyst.ui.screen.loggedIn.lists
+package com.vitorpamplona.amethyst.ui.screen.loggedIn.lists.followsets
 
 import android.util.Log
 import androidx.compose.runtime.MutableState
@@ -124,7 +124,7 @@ class FollowSetFeedViewModel(
             println("You are in read-only mode. Please login to make modifications.")
         } else {
             viewModelScope.launch(Dispatchers.IO) {
-                PeopleListEvent.createListWithDescription(
+                PeopleListEvent.Companion.createListWithDescription(
                     dTag = UUID.randomUUID().toString(),
                     title = setName,
                     description = setDescription,
@@ -149,7 +149,7 @@ class FollowSetFeedViewModel(
         } else {
             viewModelScope.launch(Dispatchers.IO) {
                 val setEvent = getFollowSetNote(followSet.identifierTag, account)?.event as PeopleListEvent
-                PeopleListEvent.modifyListName(
+                PeopleListEvent.Companion.modifyListName(
                     earlierVersion = setEvent,
                     newName = newName,
                     signer = account.signer,
@@ -170,7 +170,7 @@ class FollowSetFeedViewModel(
         } else {
             viewModelScope.launch(Dispatchers.IO) {
                 val setEvent = getFollowSetNote(followSet.identifierTag, account)?.event as PeopleListEvent
-                PeopleListEvent.modifyDescription(
+                PeopleListEvent.Companion.modifyDescription(
                     earlierVersion = setEvent,
                     newDescription = newDescription,
                     signer = account.signer,
@@ -191,7 +191,7 @@ class FollowSetFeedViewModel(
             println("You are in read-only mode. Please login to make modifications.")
         } else {
             viewModelScope.launch(Dispatchers.IO) {
-                PeopleListEvent.copy(
+                PeopleListEvent.Companion.copy(
                     dTag = UUID.randomUUID().toString(),
                     title = customCloneName ?: currentFollowSet.title,
                     description = customCloneDescription ?: currentFollowSet.description,
@@ -215,7 +215,7 @@ class FollowSetFeedViewModel(
         } else {
             viewModelScope.launch(Dispatchers.IO) {
                 val followSetEvent = getFollowSetNote(followSet.identifierTag, account)?.event as PeopleListEvent
-                val deletionEvent = account.signer.sign(DeletionEvent.build(listOf(followSetEvent)))
+                val deletionEvent = account.signer.sign(DeletionEvent.Companion.build(listOf(followSetEvent)))
                 account.sendMyPublicAndPrivateOutbox(deletionEvent)
             }
         }
@@ -233,7 +233,7 @@ class FollowSetFeedViewModel(
         } else {
             viewModelScope.launch(Dispatchers.IO) {
                 val followSetEvent = getFollowSetNote(followSet.identifierTag, account)?.event as PeopleListEvent
-                PeopleListEvent.addUser(
+                PeopleListEvent.Companion.addUser(
                     earlierVersion = followSetEvent,
                     pubKeyHex = userProfileHex,
                     isPrivate = shouldBePrivateMember,
@@ -257,7 +257,7 @@ class FollowSetFeedViewModel(
         } else {
             viewModelScope.launch(Dispatchers.IO) {
                 val followSetEvent = getFollowSetNote(followSet.identifierTag, account)?.event as PeopleListEvent
-                PeopleListEvent.removeUser(
+                PeopleListEvent.Companion.removeUser(
                     earlierVersion = followSetEvent,
                     pubKeyHex = userProfileHex,
                     isUserPrivate = userIsPrivate,

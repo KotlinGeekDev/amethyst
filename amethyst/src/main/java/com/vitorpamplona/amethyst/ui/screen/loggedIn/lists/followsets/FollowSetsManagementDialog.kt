@@ -85,9 +85,9 @@ import com.vitorpamplona.amethyst.model.nip51Lists.followSets.SetVisibility
 import com.vitorpamplona.amethyst.ui.navigation.navs.INav
 import com.vitorpamplona.amethyst.ui.note.ArrowBackIcon
 import com.vitorpamplona.amethyst.ui.screen.loggedIn.AccountViewModel
-import com.vitorpamplona.amethyst.ui.screen.loggedIn.lists.FollowSetFeedState
-import com.vitorpamplona.amethyst.ui.screen.loggedIn.lists.FollowSetFeedViewModel
 import com.vitorpamplona.amethyst.ui.screen.loggedIn.lists.NewSetCreationDialog
+import com.vitorpamplona.amethyst.ui.screen.loggedIn.lists.followsets.FollowSetFeedState
+import com.vitorpamplona.amethyst.ui.screen.loggedIn.lists.followsets.FollowSetFeedViewModel
 import com.vitorpamplona.amethyst.ui.stringRes
 import com.vitorpamplona.amethyst.ui.theme.ButtonBorder
 import com.vitorpamplona.amethyst.ui.theme.StdHorzSpacer

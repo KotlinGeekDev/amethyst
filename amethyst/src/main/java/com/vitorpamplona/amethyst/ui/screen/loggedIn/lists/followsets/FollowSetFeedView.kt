@@ -18,7 +18,7 @@
  * AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.vitorpamplona.amethyst.ui.screen.loggedIn.lists
+package com.vitorpamplona.amethyst.ui.screen.loggedIn.lists.followsets
 
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
@@ -46,7 +46,7 @@ import com.vitorpamplona.amethyst.ui.theme.StdVertSpacer
 
 @Composable
 fun FollowSetFeedView(
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier.Companion,
     followSetFeedState: FollowSetFeedState,
     onRefresh: () -> Unit = {},
     onOpenItem: (String) -> Unit = {},
@@ -90,7 +90,7 @@ fun FollowSetFeedView(
 
 @Composable
 fun FollowSetLoaded(
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier.Companion,
     loadedFeedState: List<FollowSet>,
     onRefresh: () -> Unit = {},
     onItemClick: (itemIdentifier: String) -> Unit = {},
@@ -111,7 +111,7 @@ fun FollowSetLoaded(
         ) {
             itemsIndexed(loadedFeedState, key = { _, item -> item.identifierTag }) { _, set ->
                 CustomSetItem(
-                    modifier = Modifier.fillMaxSize().animateItem(),
+                    modifier = Modifier.Companion.fillMaxSize().animateItem(),
                     followSet = set,
                     onFollowSetClick = {
                         onItemClick(set.identifierTag)
@@ -141,8 +141,8 @@ fun FollowSetFeedEmpty(
     onRefresh: () -> Unit,
 ) {
     Column(
-        Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
+        Modifier.Companion.fillMaxSize(),
+        horizontalAlignment = Alignment.Companion.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
         Text(message)

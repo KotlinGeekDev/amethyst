@@ -18,7 +18,7 @@
  * AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.vitorpamplona.amethyst.ui.screen.loggedIn.lists.followsets
+package com.vitorpamplona.amethyst.ui.screen.loggedIn.lists.followsets.followsetdetail
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -75,7 +75,7 @@ import com.vitorpamplona.amethyst.ui.navigation.navs.INav
 import com.vitorpamplona.amethyst.ui.note.UserCompose
 import com.vitorpamplona.amethyst.ui.note.VerticalDotsIcon
 import com.vitorpamplona.amethyst.ui.screen.loggedIn.AccountViewModel
-import com.vitorpamplona.amethyst.ui.screen.loggedIn.lists.FollowSetFeedViewModel
+import com.vitorpamplona.amethyst.ui.screen.loggedIn.lists.followsets.FollowSetFeedViewModel
 import com.vitorpamplona.amethyst.ui.screen.loggedIn.qrcode.BackButton
 import com.vitorpamplona.amethyst.ui.stringRes
 import com.vitorpamplona.amethyst.ui.theme.ButtonBorder
@@ -131,7 +131,7 @@ fun FollowSetScreen(
                     val event = note.event as PeopleListEvent
                     println("Found list, with title: ${event.nameOrTitle()}")
                     val selectedFollowSet =
-                        FollowSet.mapEventToSet(
+                        FollowSet.Companion.mapEventToSet(
                             event,
                             accountViewModel.account.signer,
                         )
@@ -188,7 +188,7 @@ fun FollowSetScreen(
             ) { padding ->
                 FollowSetListView(
                     modifier =
-                        Modifier
+                        Modifier.Companion
                             .fillMaxSize()
                             .padding(
                                 top = padding.calculateTopPadding(),
@@ -226,14 +226,14 @@ fun Set<String>.mapToUsers(accountViewModel: AccountViewModel): List<User?> = ma
 
 @Composable
 fun TitleAndDescription(
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier.Companion,
     followSet: FollowSet,
 ) {
     Column(
         modifier = modifier,
     ) {
         Row(
-            verticalAlignment = Alignment.CenterVertically,
+            verticalAlignment = Alignment.Companion.CenterVertically,
         ) {
             Text(
                 text = followSet.title,
@@ -249,9 +249,9 @@ fun TitleAndDescription(
             Text(
                 text = followSet.description,
                 fontSize = 18.sp,
-                fontWeight = FontWeight.Thin,
+                fontWeight = FontWeight.Companion.Thin,
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
+                overflow = TextOverflow.Companion.Ellipsis,
             )
         }
     }
@@ -259,7 +259,7 @@ fun TitleAndDescription(
 
 @Composable
 private fun FollowSetListView(
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier.Companion,
     publicMemberList: List<User>,
     privateMemberList: List<User>,
     onDeleteUser: (String) -> Unit,
@@ -281,10 +281,10 @@ private fun FollowSetListView(
                     Text(
                         text = stringRes(R.string.follow_set_public_members_header_label),
                         fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
+                        fontWeight = FontWeight.Companion.Bold,
                     )
                     HorizontalDivider(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier.Companion.fillMaxWidth(),
                         thickness = 2.dp,
                         color = MaterialTheme.colorScheme.onBackground,
                     )
@@ -292,7 +292,7 @@ private fun FollowSetListView(
             }
             itemsIndexed(publicMemberList, key = { _, item -> item.pubkeyHex }) { _, item ->
                 FollowSetListItem(
-                    modifier = Modifier.animateItem(),
+                    modifier = Modifier.Companion.animateItem(),
                     user = item,
                     accountViewModel = accountViewModel,
                     nav = nav,
@@ -300,7 +300,7 @@ private fun FollowSetListView(
                 )
             }
             item {
-                Spacer(modifier = Modifier.height(30.dp))
+                Spacer(modifier = Modifier.Companion.height(30.dp))
             }
         }
         if (privateMemberList.isNotEmpty()) {
@@ -308,17 +308,17 @@ private fun FollowSetListView(
                 Text(
                     text = stringRes(R.string.follow_set_private_members_header_label),
                     fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
+                    fontWeight = FontWeight.Companion.Bold,
                 )
                 HorizontalDivider(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.Companion.fillMaxWidth(),
                     thickness = 2.dp,
                     color = MaterialTheme.colorScheme.onBackground,
                 )
             }
             itemsIndexed(privateMemberList, key = { _, item -> item.pubkeyHex }) { _, item ->
                 FollowSetListItem(
-                    modifier = Modifier.animateItem(),
+                    modifier = Modifier.Companion.animateItem(),
                     user = item,
                     accountViewModel = accountViewModel,
                     nav = nav,
@@ -326,7 +326,7 @@ private fun FollowSetListView(
                 )
             }
             item {
-                Spacer(modifier = Modifier.height(30.dp))
+                Spacer(modifier = Modifier.Companion.height(30.dp))
             }
         }
     }
@@ -334,7 +334,7 @@ private fun FollowSetListView(
 
 @Composable
 fun FollowSetListItem(
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier.Companion,
     user: User,
     accountViewModel: AccountViewModel,
     nav: INav,
@@ -356,7 +356,7 @@ fun FollowSetListItem(
                 },
                 modifier =
                     HalfPadding
-                        .align(Alignment.CenterVertically)
+                        .align(Alignment.Companion.CenterVertically)
                         .background(
                             color = MaterialTheme.colorScheme.errorContainer,
                             shape = RoundedCornerShape(percent = 80),
@@ -365,7 +365,7 @@ fun FollowSetListItem(
                 Icon(
                     imageVector = Icons.Default.Delete,
                     contentDescription = null,
-                    modifier = Modifier.size(20.dp),
+                    modifier = Modifier.Companion.size(20.dp),
                 )
             }
         }
@@ -375,7 +375,7 @@ fun FollowSetListItem(
 
 @Composable
 fun ListActionsMenuButton(
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier.Companion,
     onBroadcastList: () -> Unit,
     onDeleteList: () -> Unit,
 ) {
@@ -386,7 +386,7 @@ fun ListActionsMenuButton(
             StdPadding
                 .size(30.dp)
                 .border(
-                    width = Dp.Hairline,
+                    width = Dp.Companion.Hairline,
                     color = ButtonDefaults.filledTonalButtonColors().containerColor,
                     shape = ButtonBorder,
                 ).background(
@@ -407,7 +407,7 @@ fun ListActionsMenuButton(
 
 @Composable
 fun ListActionsMenu(
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier.Companion,
     onCloseMenu: () -> Unit,
     isOpen: Boolean,
     onBroadcastList: () -> Unit,

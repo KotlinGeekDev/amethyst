@@ -18,7 +18,7 @@
  * AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.vitorpamplona.amethyst.ui.screen.loggedIn.lists
+package com.vitorpamplona.amethyst.ui.screen.loggedIn.lists.followsets
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -64,7 +64,7 @@ import com.vitorpamplona.amethyst.ui.theme.StdVertSpacer
 
 @Composable
 fun CustomSetItem(
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier.Companion,
     followSet: FollowSet,
     onFollowSetClick: () -> Unit,
     onFollowSetRename: (String) -> Unit,
@@ -80,19 +80,19 @@ fun CustomSetItem(
     ) {
         Row(
             modifier =
-                Modifier
+                Modifier.Companion
                     .padding(bottom = 12.dp)
                     .weight(1f),
-            verticalAlignment = Alignment.CenterVertically,
+            verticalAlignment = Alignment.Companion.CenterVertically,
         ) {
             Column(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.Companion.weight(1f),
                 verticalArrangement = Arrangement.Center,
             ) {
                 Row(
-                    verticalAlignment = Alignment.CenterVertically,
+                    verticalAlignment = Alignment.Companion.CenterVertically,
                 ) {
-                    Text(followSet.title, fontWeight = FontWeight.Bold)
+                    Text(followSet.title, fontWeight = FontWeight.Companion.Bold)
                     Spacer(modifier = StdHorzSpacer)
                     if (followSet.publicProfiles.isEmpty() && followSet.privateProfiles.isEmpty()) {
                         FilterChip(
@@ -167,8 +167,8 @@ fun CustomSetItem(
                 Spacer(modifier = StdVertSpacer)
                 Text(
                     followSet.description ?: "",
-                    fontWeight = FontWeight.Light,
-                    overflow = TextOverflow.Ellipsis,
+                    fontWeight = FontWeight.Companion.Light,
+                    overflow = TextOverflow.Companion.Ellipsis,
                     maxLines = 2,
                 )
             }
@@ -176,11 +176,11 @@ fun CustomSetItem(
 
         Column(
             modifier =
-                Modifier
+                Modifier.Companion
                     .padding(start = 5.dp)
                     .padding(vertical = 7.dp),
             verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.End,
+            horizontalAlignment = Alignment.Companion.End,
         ) {
             SetOptionsButton(
                 followSetName = followSet.title,
@@ -196,7 +196,7 @@ fun CustomSetItem(
 
 @Composable
 private fun SetOptionsButton(
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier.Companion,
     followSetName: String,
     followSetDescription: String?,
     onSetRename: (String) -> Unit,
@@ -226,7 +226,7 @@ private fun SetOptionsButton(
 
 @Composable
 private fun SetOptionsMenu(
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier.Companion,
     isExpanded: Boolean,
     setName: String,
     setDescription: String?,
@@ -328,7 +328,7 @@ private fun SetOptionsMenu(
 
 @Composable
 private fun SetRenameDialog(
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier.Companion,
     currentName: String,
     newName: String,
     onStringRenameChange: (String) -> Unit,
@@ -340,8 +340,8 @@ private fun SetRenameDialog(
             append(stringRes(R.string.follow_set_rename_dialog_indicator_first_part) + " ")
             withStyle(
                 SpanStyle(
-                    fontWeight = FontWeight.Bold,
-                    fontStyle = FontStyle.Normal,
+                    fontWeight = FontWeight.Companion.Bold,
+                    fontStyle = FontStyle.Companion.Normal,
                     fontSize = 15.sp,
                 ),
             ) {
@@ -358,13 +358,13 @@ private fun SetRenameDialog(
         text = {
             Column(
                 verticalArrangement = Arrangement.spacedBy(Size5dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
+                horizontalAlignment = Alignment.Companion.CenterHorizontally,
             ) {
                 Text(
                     text = renameIndicator,
                     fontSize = 15.sp,
-                    fontWeight = FontWeight.Light,
-                    fontStyle = FontStyle.Italic,
+                    fontWeight = FontWeight.Companion.Light,
+                    fontStyle = FontStyle.Companion.Italic,
                 )
                 TextField(
                     value = newName,
@@ -388,7 +388,7 @@ private fun SetRenameDialog(
 
 @Composable
 private fun SetModifyDescriptionDialog(
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier.Companion,
     currentDescription: String?,
     onDismissDialog: () -> Unit,
     onModifyDescription: (String?) -> Unit,
@@ -403,8 +403,8 @@ private fun SetModifyDescriptionDialog(
                 append(stringRes(R.string.follow_set_current_desc_label) + " ")
                 withStyle(
                     SpanStyle(
-                        fontWeight = FontWeight.Bold,
-                        fontStyle = FontStyle.Normal,
+                        fontWeight = FontWeight.Companion.Bold,
+                        fontStyle = FontStyle.Companion.Normal,
                         fontSize = 15.sp,
                     ),
                 ) {
@@ -421,13 +421,13 @@ private fun SetModifyDescriptionDialog(
         text = {
             Column(
                 verticalArrangement = Arrangement.spacedBy(Size5dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
+                horizontalAlignment = Alignment.Companion.CenterHorizontally,
             ) {
                 Text(
                     text = modifyIndicatorLabel,
                     fontSize = 15.sp,
-                    fontWeight = FontWeight.Light,
-                    fontStyle = FontStyle.Italic,
+                    fontWeight = FontWeight.Companion.Light,
+                    fontStyle = FontStyle.Companion.Italic,
                 )
                 TextField(
                     value = updatedDescription.value ?: "",
@@ -451,7 +451,7 @@ private fun SetModifyDescriptionDialog(
 
 @Composable
 private fun SetCloneDialog(
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier.Companion,
     optionalNewName: String?,
     optionalNewDesc: String?,
     onCloneNameChange: (String?) -> Unit,
@@ -463,7 +463,7 @@ private fun SetCloneDialog(
         onDismissRequest = onDismiss,
         title = {
             Row(
-                verticalAlignment = Alignment.CenterVertically,
+                verticalAlignment = Alignment.Companion.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Text(
@@ -478,8 +478,8 @@ private fun SetCloneDialog(
                 Text(
                     text = stringRes(R.string.follow_set_copy_indicator_description),
                     fontSize = 15.sp,
-                    fontWeight = FontWeight.Light,
-                    fontStyle = FontStyle.Italic,
+                    fontWeight = FontWeight.Companion.Light,
+                    fontStyle = FontStyle.Companion.Italic,
                 )
                 // For the set clone name
                 TextField(
