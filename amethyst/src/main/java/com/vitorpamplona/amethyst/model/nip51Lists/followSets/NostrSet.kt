@@ -25,10 +25,3 @@ sealed class NostrSet(
     val privateContent: Collection<String>,
     val publicContent: Collection<String>,
 )
-
-class CuratedBookmarkSet(
-    val name: String,
-    val visibility: SetVisibility,
-    val privateSetItems: List<String>,
-    val publicSetItems: List<String>,
-) : NostrSet(visibility, privateSetItems, publicSetItems)
