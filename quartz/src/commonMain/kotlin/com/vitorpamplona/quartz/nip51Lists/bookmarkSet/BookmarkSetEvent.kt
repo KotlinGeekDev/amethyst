@@ -41,6 +41,7 @@ import com.vitorpamplona.quartz.nip51Lists.bookmarkList.tags.BookmarkIdTag
 import com.vitorpamplona.quartz.nip51Lists.bookmarkList.tags.EventBookmark
 import com.vitorpamplona.quartz.nip51Lists.encryption.PrivateTagsInContent
 import com.vitorpamplona.quartz.nip51Lists.remove
+import com.vitorpamplona.quartz.nip51Lists.tags.DescriptionTag
 import com.vitorpamplona.quartz.nip51Lists.tags.NameTag
 import com.vitorpamplona.quartz.utils.TimeUtils
 import kotlin.collections.plus
@@ -71,6 +72,8 @@ class BookmarkSetEvent(
     fun title() = tags.firstNotNullOfOrNull(TitleTag::parse)
 
     fun nameOrTitle() = name() ?: title()
+
+    fun description() = tags.firstNotNullOfOrNull(DescriptionTag::parse)
 
     fun countBookmarks() = tags.count(BookmarkIdTag::isTagged)
 
