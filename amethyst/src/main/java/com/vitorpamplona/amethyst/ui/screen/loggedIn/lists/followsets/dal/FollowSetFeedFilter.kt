@@ -18,11 +18,12 @@
  * AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.vitorpamplona.amethyst.ui.dal
+package com.vitorpamplona.amethyst.ui.screen.loggedIn.lists.followsets.dal
 
 import android.util.Log
 import com.vitorpamplona.amethyst.model.nip51Lists.followSets.FollowSet
 import com.vitorpamplona.amethyst.model.nip51Lists.followSets.FollowSetState
+import com.vitorpamplona.amethyst.ui.dal.FeedFilter
 import kotlinx.coroutines.runBlocking
 
 class FollowSetFeedFilter(
@@ -39,7 +40,10 @@ class FollowSetFeedFilter(
                 followSets
             } catch (e: Exception) {
                 // if (e is CancellationException) throw e
-                Log.e(this@FollowSetFeedFilter.javaClass.simpleName, "Failed to load follow lists: ${e.message}")
+                Log.e(
+                    this@FollowSetFeedFilter.javaClass.simpleName,
+                    "Failed to load follow lists: ${e.message}",
+                )
                 throw e
             }
         }

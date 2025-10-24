@@ -131,7 +131,7 @@ fun FollowSetScreen(
                     val event = note.event as PeopleListEvent
                     println("Found list, with title: ${event.nameOrTitle()}")
                     val selectedFollowSet =
-                        FollowSet.Companion.mapEventToSet(
+                        FollowSet.mapEventToSet(
                             event,
                             accountViewModel.account.signer,
                         )
