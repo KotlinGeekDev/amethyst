@@ -131,6 +131,7 @@ import com.vitorpamplona.quartz.nip47WalletConnect.LnZapPaymentResponseEvent
 import com.vitorpamplona.quartz.nip50Search.SearchRelayListEvent
 import com.vitorpamplona.quartz.nip51Lists.PinListEvent
 import com.vitorpamplona.quartz.nip51Lists.bookmarkList.BookmarkListEvent
+import com.vitorpamplona.quartz.nip51Lists.bookmarkSet.BookmarkSetEvent
 import com.vitorpamplona.quartz.nip51Lists.followList.FollowListEvent
 import com.vitorpamplona.quartz.nip51Lists.geohashList.GeohashListEvent
 import com.vitorpamplona.quartz.nip51Lists.hashtagList.HashtagListEvent
@@ -2135,6 +2136,20 @@ object LocalCache : ILocalCache {
                 (
                     listEvent is PeopleListEvent &&
                         user.pubkeyHex == listEvent.pubKey
+                )
+            }
+    }
+
+    fun getBookmarkSetsFor(user: User): List<AddressableNote> {
+        checkNotInMainThread()
+
+        return addressables
+            .filter { _, note ->
+                val setEvent = note.event
+                (
+                    setEvent is BookmarkSetEvent &&
+                        user.pubkeyHex == setEvent.pubKey
+
                 )
             }
     }
