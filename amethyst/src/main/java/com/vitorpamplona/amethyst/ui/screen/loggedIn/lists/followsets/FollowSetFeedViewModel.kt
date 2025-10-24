@@ -288,7 +288,7 @@ class FollowSetFeedViewModel(
         }
     }
 
-    var collectorJob: Job? = null
+    private var collectorJob: Job? = null
 
     init {
         Log.d("Init", this.javaClass.simpleName)
