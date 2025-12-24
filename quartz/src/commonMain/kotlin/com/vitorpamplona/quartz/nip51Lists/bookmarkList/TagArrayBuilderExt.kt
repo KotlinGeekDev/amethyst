@@ -27,3 +27,7 @@ import com.vitorpamplona.quartz.nip51Lists.tags.NameTag
 fun TagArrayBuilder<BookmarkListEvent>.name(name: String) = addUnique(NameTag.assemble(name))
 
 fun TagArrayBuilder<BookmarkListEvent>.bookmarks(bookmarks: List<BookmarkIdTag>) = addAll(bookmarks.map { it.toTagArray() })
+
+fun TagArrayBuilder<GeneralBookmarkListEvent>.listName(name: String) = addUnique(NameTag.assemble(name))
+
+fun TagArrayBuilder<GeneralBookmarkListEvent>.listBookmarks(bookmarks: List<BookmarkIdTag>) = addAll(bookmarks.map { it.toTagArray() })
