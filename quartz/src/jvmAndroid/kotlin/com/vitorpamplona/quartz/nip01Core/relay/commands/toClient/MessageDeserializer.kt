@@ -25,29 +25,29 @@ import com.fasterxml.jackson.core.JsonToken
 import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer
-import com.vitorpamplona.quartz.nip01Core.jackson.EventManualDeserializer
+import com.vitorpamplona.quartz.nip01Core.jackson.EventDeserializer
 
 class MessageDeserializer : StdDeserializer<Message>(Message::class.java) {
+    val eventDeserializer = EventDeserializer()
+
     override fun deserialize(
         jp: JsonParser,
         ctxt: DeserializationContext,
-    ): Message? {
+    ): Message {
         // Expect to start with a JSON array token
         if (jp.currentToken != JsonToken.START_ARRAY) {
             ctxt.reportWrongTokenException(this, JsonToken.START_ARRAY, "Expected START_ARRAY token")
         }
 
-        val type = jp.nextTextValue()
         val message =
-            when (type) {
+            when (val type = jp.nextTextValue()) {
                 EventMessage.LABEL -> {
                     val subId = jp.nextTextValue()
                     jp.nextToken()
-                    val event: JsonNode = jp.codec.readTree(jp)
 
                     EventMessage(
                         subId = subId,
-                        event = EventManualDeserializer.fromJson(event),
+                        event = eventDeserializer.deserialize(jp, ctxt),
                     )
                 }
 

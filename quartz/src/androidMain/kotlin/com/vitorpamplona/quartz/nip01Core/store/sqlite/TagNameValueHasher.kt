@@ -20,31 +20,40 @@
  */
 package com.vitorpamplona.quartz.nip01Core.store.sqlite
 
-import android.database.sqlite.SQLiteDatabase
-import android.database.sqlite.SQLiteStatement
-import android.util.LruCache
+import com.vitorpamplona.quartz.nip01Core.hints.bloom.MurmurHash3
 
-object StatementCache {
-    data class StatementKey(
-        val sql: String,
-        val dbHashcode: Int,
-    )
+/**
+ * The seed is used to compute the hash of the Key, which
+ * becomes the seed for the hash of the value
+ */
+class TagNameValueHasher(
+    val seed: Long,
+) {
+    val hasher = MurmurHash3()
 
-    val cachedStatements = LruCache<StatementKey, SQLiteStatement>(10)
-
-    fun get(
-        sql: String,
-        db: SQLiteDatabase,
-    ): SQLiteStatement {
-        val key = StatementKey(sql, db.hashCode())
-        val cached = cachedStatements.get(key)
-        return if (cached != null) {
-            cached.clearBindings()
-            cached
-        } else {
-            val stat = db.compileStatement(sql)
-            cachedStatements.put(key, stat)
-            stat
-        }
+    // small performance improvements on inserting
+    val eTagHash by lazy {
+        hasher.hash128x64Half("e".encodeToByteArray(), seed)
     }
+    val aTagHash by lazy {
+        hasher.hash128x64Half("a".encodeToByteArray(), seed)
+    }
+
+    fun hash(
+        key: ByteArray,
+        value: ByteArray,
+    ) = hasher.hash128x64Half(value, hasher.hash128x64Half(key, seed))
+
+    /*
+     * We tried caching these values to avoid recomputation of the hash
+     * But caching on a LruCache<String, Long> is slower than recomputing
+     */
+    fun hash(
+        key: String,
+        value: String,
+    ) = hash(key.encodeToByteArray(), value.encodeToByteArray())
+
+    fun hashATag(value: String) = hasher.hash128x64Half(value.encodeToByteArray(), aTagHash)
+
+    fun hashETag(value: String) = hasher.hash128x64Half(value.encodeToByteArray(), eTagHash)
 }

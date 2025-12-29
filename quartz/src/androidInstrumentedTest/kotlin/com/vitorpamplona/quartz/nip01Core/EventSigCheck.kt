@@ -27,7 +27,6 @@ import com.vitorpamplona.quartz.nip01Core.crypto.checkSignature
 import com.vitorpamplona.quartz.nip01Core.crypto.verifyId
 import com.vitorpamplona.quartz.nip01Core.crypto.verifySignature
 import com.vitorpamplona.quartz.nip01Core.relay.commands.toClient.EventMessage
-import com.vitorpamplona.quartz.nip01Core.relay.commands.toClient.Message
 import com.vitorpamplona.quartz.nip25Reactions.ReactionEvent
 import com.vitorpamplona.quartz.nip57Zaps.LnZapEvent
 import com.vitorpamplona.quartz.nip99Classifieds.ClassifiedsEvent
@@ -64,7 +63,7 @@ class EventSigCheck {
 
     @Test
     fun testUnicode2028and2029ShouldNotBeEscaped() {
-        val msg = OptimizedJsonMapper.fromJsonTo<Message>(payload1) as EventMessage
+        val msg = OptimizedJsonMapper.fromJsonToMessage(payload1) as EventMessage
 
         // Should pass
         msg.event.checkSignature()
@@ -89,8 +88,10 @@ class EventSigCheck {
 
         val old = EventHasherSerializer.makeJsonForId(event.pubKey, event.createdAt, event.kind, event.tags, event.content)
         val new = EventHasherSerializer.fastMakeJsonForId(event.pubKey, event.createdAt, event.kind, event.tags, event.content)
+        val new2 = EventHasherSerializer.makeJsonForIdHashAndCheck(event.id, event.pubKey, event.createdAt, event.kind, event.tags, event.content)
 
         assertEquals(old.toByteArray().joinToString(), new.joinToString())
+        assertTrue(new2)
         assertTrue(event.verifySignature())
         assertTrue(event.verifyId())
     }
@@ -123,11 +124,14 @@ class EventSigCheck {
 
         val old = EventHasherSerializer.makeJsonForId(event.pubKey, event.createdAt, event.kind, event.tags, event.content)
         val new = EventHasherSerializer.fastMakeJsonForId(event.pubKey, event.createdAt, event.kind, event.tags, event.content)
+        val new2 = EventHasherSerializer.makeJsonForIdHashAndCheck(event.id, event.pubKey, event.createdAt, event.kind, event.tags, event.content)
 
         println(old)
         println(String(new))
+        println(new2)
 
         assertEquals(old, String(new))
+        assertTrue(new2)
         assertTrue(event.verifySignature())
         assertTrue(event.verifyId())
     }
@@ -153,13 +157,18 @@ class EventSigCheck {
                 sig = "81d08765524bd8b774585a57c76d25b1d2c09eaa23efcb075226ba8b64f42e3d9d9403e5edf888e0e58702a24abc084259e21b97e24a275021c5e36186c65f0c",
             )
 
+        println("TESTING")
+
         val old = EventHasherSerializer.makeJsonForId(event.pubKey, event.createdAt, event.kind, event.tags, event.content)
         val new = EventHasherSerializer.fastMakeJsonForId(event.pubKey, event.createdAt, event.kind, event.tags, event.content)
+        val new2 = EventHasherSerializer.makeJsonForIdHashAndCheck(event.id, event.pubKey, event.createdAt, event.kind, event.tags, event.content)
 
         println(old)
         println(String(new))
+        println(new2)
 
         assertEquals(old.toByteArray().joinToString(), new.joinToString())
+        assertTrue(new2)
         assertTrue(event.verifySignature())
         assertTrue(event.verifyId())
     }
