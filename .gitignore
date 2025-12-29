@@ -19,6 +19,9 @@
 /.idea/kotlinNotebook.xml
 /.idea/ChatHistory_schema_v3.xml
 /.idea/markdown.xml
+/.idea/AndroidProjectSystem.xml
+/.idea/deviceManager.xml
+/.idea/inspectionProfiles/
 .DS_Store
 /build
 /captures
@@ -138,3 +141,6 @@ lint/generated/
 lint/outputs/
 lint/tmp/
 # lint/reports/
+
+# Local task tracking
+TASKS.md
