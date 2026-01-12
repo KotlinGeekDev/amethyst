@@ -20,26 +20,9 @@
  */
 package com.vitorpamplona.amethyst.ui.dal
 
+import com.vitorpamplona.amethyst.model.ListChange
 import kotlinx.coroutines.flow.MutableSharedFlow
 
 interface ChangesFlowFilter<T> : IAdditiveFeedFilter<T> {
     fun changesFlow(): MutableSharedFlow<ListChange<T>>
-}
-
-sealed class ListChange<out T> {
-    data class Addition<T>(
-        val item: T,
-    ) : ListChange<T>()
-
-    data class Deletion<T>(
-        val item: T,
-    ) : ListChange<T>()
-
-    data class SetAddition<T>(
-        val item: Set<T>,
-    ) : ListChange<T>()
-
-    data class SetDeletion<T>(
-        val item: Set<T>,
-    ) : ListChange<T>()
 }

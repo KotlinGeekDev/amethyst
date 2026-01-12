@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsComposeCompiler)
     alias(libs.plugins.composeMultiplatform)
+    alias(libs.plugins.mokoResources)
 }
 
 android {
@@ -64,12 +65,21 @@ kotlin {
                 implementation(compose.runtime)
                 implementation(compose.material3)
                 implementation(compose.materialIconsExtended)
+                implementation(compose.components.uiToolingPreview)
+
+                // Image loading (Coil 3 - KMP)
+                implementation(libs.coil.compose)
+                implementation(libs.coil.okhttp)
 
                 // LruCache (KMP-ready)
                 implementation(libs.androidx.collection)
 
                 // Immutable collections
                 api(libs.kotlinx.collections.immutable)
+
+                // Moko Resources for KMP string resources
+                api(libs.moko.resources)
+                api(libs.moko.resources.compose)
             }
         }
 
@@ -94,6 +104,9 @@ kotlin {
                 // Desktop-specific Compose
                 implementation(compose.desktop.currentOs)
                 implementation(compose.uiTooling)
+
+                // Secure key storage via OS keychain (macOS/Windows/Linux)
+                implementation(libs.java.keyring)
             }
         }
 
@@ -102,6 +115,10 @@ kotlin {
             dependencies {
                 // Android-specific Compose tooling
                 implementation(libs.androidx.ui.tooling.preview)
+
+                // Secure key storage via Android Keystore
+                implementation(libs.androidx.security.crypto.ktx)
+                implementation(libs.androidx.datastore.preferences)
             }
         }
 
@@ -118,4 +135,9 @@ kotlin {
             }
         }
     }
+}
+
+multiplatformResources {
+    resourcesPackage.set("com.vitorpamplona.amethyst.commons")
+    resourcesClassName.set("SharedRes")
 }
