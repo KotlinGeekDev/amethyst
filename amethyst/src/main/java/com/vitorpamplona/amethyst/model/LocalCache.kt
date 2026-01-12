@@ -31,9 +31,9 @@ import com.vitorpamplona.amethyst.model.nip53LiveActivities.LiveActivitiesChanne
 import com.vitorpamplona.amethyst.model.observables.LatestByKindAndAuthor
 import com.vitorpamplona.amethyst.model.observables.LatestByKindWithETag
 import com.vitorpamplona.amethyst.model.privateChats.ChatroomList
+import com.vitorpamplona.amethyst.service.BundledInsert
 import com.vitorpamplona.amethyst.service.checkNotInMainThread
 import com.vitorpamplona.amethyst.ui.note.dateFormatter
-import com.vitorpamplona.ammolite.relays.BundledInsert
 import com.vitorpamplona.quartz.experimental.audio.header.AudioHeaderEvent
 import com.vitorpamplona.quartz.experimental.audio.track.AudioTrackEvent
 import com.vitorpamplona.quartz.experimental.edits.TextNoteModificationEvent
@@ -46,6 +46,7 @@ import com.vitorpamplona.quartz.experimental.interactiveStories.InteractiveStory
 import com.vitorpamplona.quartz.experimental.medical.FhirResourceEvent
 import com.vitorpamplona.quartz.experimental.nip95.data.FileStorageEvent
 import com.vitorpamplona.quartz.experimental.nip95.header.FileStorageHeaderEvent
+import com.vitorpamplona.quartz.experimental.nipsOnNostr.NipTextEvent
 import com.vitorpamplona.quartz.experimental.nns.NNSEvent
 import com.vitorpamplona.quartz.experimental.profileGallery.ProfileGalleryEntryEvent
 import com.vitorpamplona.quartz.experimental.publicMessages.PublicMessageEvent
@@ -666,6 +667,51 @@ object LocalCache : ILocalCache {
     ) = consumeRegularEvent(event, relay, wasVerified)
 
     fun consume(
+        event: NipTextEvent,
+        relay: NormalizedRelayUrl?,
+        wasVerified: Boolean,
+    ): Boolean {
+        val version = getOrCreateNote(event.id)
+        val note = getOrCreateAddressableNote(event.address())
+        val author = getOrCreateUser(event.pubKey)
+
+        val isVerified =
+            if (version.event == null && (wasVerified || justVerify(event))) {
+                version.loadEvent(event, author, emptyList())
+                version.moveAllReferencesTo(note)
+                true
+            } else {
+                wasVerified
+            }
+
+        if (relay != null) {
+            author.addRelayBeingUsed(relay, event.createdAt)
+            note.addRelay(relay)
+        }
+
+        // Already processed this event.
+        if (note.event?.id == event.id) return wasVerified
+
+        if (antiSpam.isSpam(event, relay)) {
+            return false
+        }
+
+        if (isVerified || justVerify(event)) {
+            val replyTo = computeReplyTo(event)
+
+            if (event.createdAt > (note.createdAt() ?: 0L)) {
+                note.loadEvent(event, author, replyTo)
+
+                refreshNewNoteObservers(note)
+
+                return true
+            }
+        }
+
+        return false
+    }
+
+    fun consume(
         event: LongTextNoteEvent,
         relay: NormalizedRelayUrl?,
         wasVerified: Boolean,
@@ -759,7 +805,6 @@ object LocalCache : ILocalCache {
     fun computeReplyTo(event: Event): List<Note> =
         when (event) {
             is PollNoteEvent -> event.tagsWithoutCitations().mapNotNull { checkGetOrCreateNote(it) }
-            is WikiNoteEvent -> event.tagsWithoutCitations().mapNotNull { checkGetOrCreateNote(it) }
             is LongTextNoteEvent -> event.tagsWithoutCitations().mapNotNull { checkGetOrCreateNote(it) }
             is GitReplyEvent -> event.tagsWithoutCitations().filter { it != event.repository()?.toTag() }.mapNotNull { checkGetOrCreateNote(it) }
             is TextNoteEvent -> event.tagsWithoutCitations().mapNotNull { checkGetOrCreateNote(it) }
@@ -1106,7 +1151,6 @@ object LocalCache : ILocalCache {
         val new = consumeBaseReplaceable(event, relay, wasVerified)
 
         if (new) {
-            println("AABBCC New ContactCard about ${event.aboutUser()}")
             val about = checkGetOrCreateUser(event.aboutUser()) ?: return new
             about.cards().addCard(note)
         }
@@ -2056,6 +2100,10 @@ object LocalCache : ILocalCache {
         }
 
         return notes.filter { _, note ->
+            if (note.event is AddressableEvent) {
+                return@filter false
+            }
+
             if (excludeNoteEventFromSearchResults(note)) {
                 return@filter false
             }
@@ -2853,6 +2901,7 @@ object LocalCache : ILocalCache {
                 is MetadataEvent -> consume(event, relay, wasVerified)
                 is MuteListEvent -> consume(event, relay, wasVerified)
                 is NNSEvent -> consume(event, relay, wasVerified)
+                is NipTextEvent -> consume(event, relay, wasVerified)
                 is OtsEvent -> consume(event, relay, wasVerified)
                 is PictureEvent -> consume(event, relay, wasVerified)
                 is PrivateDmEvent -> consume(event, relay, wasVerified)
@@ -2890,7 +2939,7 @@ object LocalCache : ILocalCache {
             }
         } catch (e: Exception) {
             if (e is CancellationException) throw e
-            Log.w("LocalCache", "Cannot consume ${event.kind}", e)
+            Log.w("LocalCache", "Cannot consume ${event.toJson()} from ${relay?.url}", e)
             false
         }
 
