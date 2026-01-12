@@ -1,5 +1,6 @@
 [versions]
 accompanistAdaptive = "0.37.3"
+cachemapVersion = "0.2.4"
 composeMultiplatform = "1.9.3"
 activityCompose = "1.12.2"
 agp = "8.13.2"
@@ -108,6 +109,7 @@ androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit
 androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 audiowaveform = { group = "com.github.lincollincol", name = "compose-audiowaveform", version.ref = "audiowaveform" }
+charlietap-cachemap = { module = "io.github.charlietap:cachemap", version.ref = "cachemapVersion" }
 coil-compose = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coil" }
 coil-gif = { group = "io.coil-kt.coil3", name = "coil-gif", version.ref = "coil" }
 coil-svg = { group = "io.coil-kt.coil3", name = "coil-svg", version.ref = "coil" }
