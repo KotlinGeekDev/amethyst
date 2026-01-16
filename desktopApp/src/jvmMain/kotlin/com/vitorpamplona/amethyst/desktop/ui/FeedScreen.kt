@@ -20,6 +20,7 @@
  */
 package com.vitorpamplona.amethyst.desktop.ui
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -51,17 +52,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.vitorpamplona.amethyst.commons.account.AccountState
 import com.vitorpamplona.amethyst.commons.state.EventCollectionState
-import com.vitorpamplona.amethyst.commons.subscriptions.FeedMode
-import com.vitorpamplona.amethyst.commons.subscriptions.createContactListSubscription
-import com.vitorpamplona.amethyst.commons.subscriptions.createFollowingFeedSubscription
-import com.vitorpamplona.amethyst.commons.subscriptions.createGlobalFeedSubscription
-import com.vitorpamplona.amethyst.commons.subscriptions.rememberSubscription
 import com.vitorpamplona.amethyst.commons.ui.components.LoadingState
-import com.vitorpamplona.amethyst.commons.ui.note.NoteCard
-import com.vitorpamplona.amethyst.commons.util.toNoteDisplayData
+import com.vitorpamplona.amethyst.desktop.account.AccountState
 import com.vitorpamplona.amethyst.desktop.network.DesktopRelayConnectionManager
+import com.vitorpamplona.amethyst.desktop.subscriptions.FeedMode
+import com.vitorpamplona.amethyst.desktop.subscriptions.createContactListSubscription
+import com.vitorpamplona.amethyst.desktop.subscriptions.createFollowingFeedSubscription
+import com.vitorpamplona.amethyst.desktop.subscriptions.createGlobalFeedSubscription
+import com.vitorpamplona.amethyst.desktop.subscriptions.rememberSubscription
+import com.vitorpamplona.amethyst.desktop.ui.note.NoteCard
 import com.vitorpamplona.quartz.nip01Core.core.Event
 import com.vitorpamplona.quartz.nip02FollowList.ContactListEvent
 
@@ -75,8 +75,14 @@ fun FeedNoteCard(
     account: AccountState.LoggedIn?,
     onReply: () -> Unit,
     onNavigateToProfile: (String) -> Unit = {},
+    onNavigateToThread: (String) -> Unit = {},
 ) {
-    Column {
+    Column(
+        modifier =
+            Modifier.clickable {
+                onNavigateToThread(event.id)
+            },
+    ) {
         NoteCard(
             note = event.toNoteDisplayData(),
             onAuthorClick = onNavigateToProfile,
@@ -101,6 +107,7 @@ fun FeedScreen(
     account: AccountState.LoggedIn? = null,
     onCompose: () -> Unit = {},
     onNavigateToProfile: (String) -> Unit = {},
+    onNavigateToThread: (String) -> Unit = {},
 ) {
     val connectedRelays by relayManager.connectedRelays.collectAsState()
     val relayStatuses by relayManager.relayStatuses.collectAsState()
@@ -274,6 +281,7 @@ fun FeedScreen(
                         account = account,
                         onReply = { replyToEvent = event },
                         onNavigateToProfile = onNavigateToProfile,
+                        onNavigateToThread = onNavigateToThread,
                     )
                 }
             }

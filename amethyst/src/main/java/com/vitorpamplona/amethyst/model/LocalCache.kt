@@ -23,14 +23,16 @@ package com.vitorpamplona.amethyst.model
 import android.util.LruCache
 import androidx.compose.runtime.Stable
 import com.vitorpamplona.amethyst.Amethyst
+import com.vitorpamplona.amethyst.commons.model.Channel
+import com.vitorpamplona.amethyst.commons.model.cache.ICacheProvider
+import com.vitorpamplona.amethyst.commons.model.emphChat.EphemeralChatChannel
+import com.vitorpamplona.amethyst.commons.model.nip28PublicChats.PublicChatChannel
+import com.vitorpamplona.amethyst.commons.model.nip53LiveActivities.LiveActivitiesChannel
+import com.vitorpamplona.amethyst.commons.model.privateChats.ChatroomList
 import com.vitorpamplona.amethyst.isDebug
-import com.vitorpamplona.amethyst.model.emphChat.EphemeralChatChannel
-import com.vitorpamplona.amethyst.model.nip28PublicChats.PublicChatChannel
 import com.vitorpamplona.amethyst.model.nip51Lists.HiddenUsersState
-import com.vitorpamplona.amethyst.model.nip53LiveActivities.LiveActivitiesChannel
 import com.vitorpamplona.amethyst.model.observables.LatestByKindAndAuthor
 import com.vitorpamplona.amethyst.model.observables.LatestByKindWithETag
-import com.vitorpamplona.amethyst.model.privateChats.ChatroomList
 import com.vitorpamplona.amethyst.service.BundledInsert
 import com.vitorpamplona.amethyst.service.checkNotInMainThread
 import com.vitorpamplona.amethyst.ui.note.dateFormatter
@@ -212,7 +214,7 @@ interface ILocalCache {
     ) {}
 }
 
-object LocalCache : ILocalCache {
+object LocalCache : ILocalCache, ICacheProvider {
     val antiSpam = AntiSpamFilter()
 
     val users = LargeSoftCache<HexKey, User>()
@@ -317,16 +319,24 @@ object LocalCache : ILocalCache {
         }
     }
 
-    fun getUserIfExists(key: String): User? {
+    override fun getUserIfExists(key: String): User? {
         if (key.isEmpty()) return null
         return users.get(key)
+    }
+
+    override fun countUsers(predicate: (String, User) -> Boolean): Int {
+        var count = 0
+        users.forEach { key, user ->
+            if (predicate(key, user)) count++
+        }
+        return count
     }
 
     fun getAddressableNoteIfExists(key: String): AddressableNote? = Address.parse(key)?.let { addressables.get(it) }
 
     fun getAddressableNoteIfExists(address: Address): AddressableNote? = addressables.get(address)
 
-    fun getNoteIfExists(key: String): Note? = if (key.length == 64) notes.get(key) else Address.parse(key)?.let { addressables.get(it) }
+    override fun getNoteIfExists(key: String): Note? = if (key.length == 64) notes.get(key) else Address.parse(key)?.let { addressables.get(it) }
 
     fun getNoteIfExists(key: ETag): Note? = notes.get(key.eventId)
 
@@ -357,7 +367,7 @@ object LocalCache : ILocalCache {
         return null
     }
 
-    fun checkGetOrCreateNote(key: String): Note? {
+    override fun checkGetOrCreateNote(key: String): Note? {
         if (ATag.isATag(key)) {
             return checkGetOrCreateAddressableNote(key)
         }
@@ -381,6 +391,19 @@ object LocalCache : ILocalCache {
         }
         return null
     }
+
+    override fun getEventStream(): com.vitorpamplona.amethyst.commons.model.cache.ICacheEventStream =
+        object : com.vitorpamplona.amethyst.commons.model.cache.ICacheEventStream {
+            override val newEventBundles = live.newEventBundles
+            override val deletedEventBundles = live.deletedEventBundles
+        }
+
+    override fun hasBeenDeleted(event: Any): Boolean =
+        if (event is Event) {
+            deletionIndex.hasBeenDeleted(event)
+        } else {
+            false
+        }
 
     fun getOrAddAliasNote(
         idHex: String,
@@ -436,7 +459,7 @@ object LocalCache : ILocalCache {
 
     fun getOrCreateAddressableNoteInternal(key: Address): AddressableNote = addressables.getOrCreate(key) { AddressableNote(key) }
 
-    fun getOrCreateAddressableNote(key: Address): AddressableNote {
+    override fun getOrCreateAddressableNote(key: Address): AddressableNote {
         val note = getOrCreateAddressableNoteInternal(key)
         // Loads the user outside a Syncronized block to avoid blocking
         if (note.author == null) {
@@ -497,8 +520,12 @@ object LocalCache : ILocalCache {
 
         // avoids processing empty contact lists.
         if (event.createdAt > (user.latestContactList?.createdAt ?: 0) && !event.tags.isEmpty() && (wasVerified || justVerify(event))) {
-            user.updateContactList(event)
+            val needsToUpdateFollowers = user.updateContactList(event)
             // Log.d("CL", "Consumed contact list ${user.toNostrUri()} ${event.relays()?.size}")
+
+            needsToUpdateFollowers.forEach {
+                getUserIfExists(it)?.flowSet?.followers?.invalidateData()
+            }
 
             updateObservables(event)
 
@@ -1371,7 +1398,7 @@ object LocalCache : ILocalCache {
         }
     }
 
-    fun getAnyChannel(note: Note): Channel? = note.event?.let { getAnyChannel(it) }
+    override fun getAnyChannel(note: Note): Channel? = note.event?.let { getAnyChannel(it) }
 
     fun getAnyChannel(noteEvent: Event): Channel? =
         when (noteEvent) {
@@ -2690,7 +2717,7 @@ object LocalCache : ILocalCache {
         }
     }
 
-    fun justConsumeMyOwnEvent(event: Event) = justConsumeAndUpdateIndexes(event, null, true)
+    override fun justConsumeMyOwnEvent(event: Event) = justConsumeAndUpdateIndexes(event, null, true)
 
     fun justConsume(
         event: Event,
