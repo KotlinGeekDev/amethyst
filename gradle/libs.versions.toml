@@ -1,6 +1,7 @@
 [versions]
 accompanistAdaptive = "0.37.3"
 cachemapVersion = "0.2.4"
+comDitchoomBufferCompression = "2.1.0"
 composeMultiplatform = "1.9.3"
 activityCompose = "1.12.2"
 agp = "8.13.2"
@@ -118,6 +119,7 @@ coil-compose = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref 
 coil-gif = { group = "io.coil-kt.coil3", name = "coil-gif", version.ref = "coil" }
 coil-svg = { group = "io.coil-kt.coil3", name = "coil-svg", version.ref = "coil" }
 coil-okhttp = { group = "io.coil-kt.coil3", name = "coil-network-okhttp", version.ref = "coil" }
+com-ditchoom-buffer-compression = { module = "com.ditchoom:buffer-compression", version.ref = "comDitchoomBufferCompression" }
 drfonfon-geohash = { group = "com.github.drfonfon", name = "android-kotlin-geohash", version.ref = "androidKotlinGeohash" }
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
 firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging" }
