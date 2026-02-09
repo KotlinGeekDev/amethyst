@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2025 Vitor Pamplona
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -476,6 +476,7 @@ private fun RelayResultRow(
                         overflow = TextOverflow.Ellipsis,
                     )
                 }
+
                 is RelayResult.Timeout -> {
                     Text(
                         text = "Timeout",
@@ -483,6 +484,7 @@ private fun RelayResultRow(
                         color = warningColor,
                     )
                 }
+
                 is RelayResult.Retrying -> {
                     Text(
                         text = "Retrying...",
@@ -490,6 +492,7 @@ private fun RelayResultRow(
                         color = MaterialTheme.colorScheme.primary,
                     )
                 }
+
                 else -> {}
             }
         }

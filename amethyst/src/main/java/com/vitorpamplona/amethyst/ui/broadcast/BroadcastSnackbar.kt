@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2025 Vitor Pamplona
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -84,6 +84,7 @@ fun BroadcastSnackbarHost(
                         onViewDetails(broadcast)
                     }
                 }
+
                 SnackbarResult.Dismissed -> { /* No action */ }
             }
         }
@@ -104,8 +105,12 @@ private fun BroadcastSnackbarContent(snackbarData: SnackbarData) {
 
     val containerColor =
         when (broadcastVisuals?.broadcast?.status) {
-            BroadcastStatus.FAILED -> Color(0xFF7F1D1D) // Dark red
-            BroadcastStatus.PARTIAL -> Color(0xFF78350F) // Dark amber
+            BroadcastStatus.FAILED -> Color(0xFF7F1D1D)
+
+            // Dark red
+            BroadcastStatus.PARTIAL -> Color(0xFF78350F)
+
+            // Dark amber
             else -> Color(0xFF1E3A5F) // Dark blue (default)
         }
 
