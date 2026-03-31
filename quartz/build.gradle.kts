@@ -242,7 +242,7 @@ kotlin {
                 dependencies {
                     implementation(libs.charlietap.cachemap)
                     implementation(libs.net.thauvin.erik.urlencoder.lib)
-                    implementation(libs.dev.whyoleg.cryptography.provider.apple.optimal)
+                    implementation(libs.dev.whyoleg.cryptography.provider.optimal)
                     implementation("io.github.andreypfau:kotlinx-crypto-hmac:0.0.4")
                     implementation("io.github.andreypfau:kotlinx-crypto-sha2:0.0.4")
                 }
@@ -282,7 +282,7 @@ kotlin {
                 dependsOn(nativeMain)
                 dependencies {
                     implementation(libs.net.thauvin.erik.urlencoder.lib)
-                    implementation(libs.dev.whyoleg.cryptography.provider.apple.optimal)
+                    implementation(libs.dev.whyoleg.cryptography.provider.optimal)
                     implementation("io.github.andreypfau:kotlinx-crypto-hmac:0.0.4")
                     implementation("io.github.andreypfau:kotlinx-crypto-sha2:0.0.4")
                 }

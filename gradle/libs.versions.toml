@@ -125,7 +125,7 @@ coil-video = { group = "io.coil-kt.coil3", name = "coil-video", version.ref = "c
 commons-imaging = { group = "org.apache.commons", name = "commons-imaging", version.ref = "commonsImaging" }
 slf4j-nop = { module = "org.slf4j:slf4j-nop", version.ref = "slf4j" }
 vlcj = { group = "uk.co.caprica", name = "vlcj", version.ref = "vlcj" }
-dev-whyoleg-cryptography-provider-apple-optimal = { module = "dev.whyoleg.cryptography:cryptography-provider-optimal", version.ref = "devWhyolegCryptography" }
+dev-whyoleg-cryptography-provider-optimal = { module = "dev.whyoleg.cryptography:cryptography-provider-optimal", version.ref = "devWhyolegCryptography" }
 drfonfon-geohash = { group = "com.github.drfonfon", name = "android-kotlin-geohash", version.ref = "androidKotlinGeohash" }
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
 firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging" }
